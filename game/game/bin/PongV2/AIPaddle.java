@@ -27,7 +27,7 @@ public class AIPaddle implements Paddle{
 	}
 
 	public void move() {
-		y= b1.getY() - 40;
+		y = y + (b1.getY() - y - 40) * 0.06; // hur snabbt AIPaddle ska röra på sig (svårighetsgrad SVÅR: y= b1.getY() - 40;)
 		
 		if(y < 0)   // så att den inte åker utanför Applet (uppe)
 			y = 0;
