@@ -13,13 +13,14 @@ public class Tennis extends Applet implements Runnable, KeyListener{
 	HumanPaddle p1;
 	AIPaddle p2;
 	Ball b1;
-	boolean gameStarted;
+	boolean gameStarted, gameOver;
 	Graphics gfx;
 	Image img;
 	
 	public void init() {
 		this.resize(WIDTH, HEIGHT);
 		gameStarted = false;
+		gameOver = false;
 		this.addKeyListener(this);
 		p1 = new HumanPaddle(1);
 		b1 = new Ball();
@@ -33,17 +34,20 @@ public class Tennis extends Applet implements Runnable, KeyListener{
 	public void paint(Graphics g) {
 		gfx.setColor(Color.black);
 		gfx.fillRect(0, 0, WIDTH, HEIGHT);
-		if(b1.getX() < -10 || b1.getX() > 710) {
+		if(gameOver) {
 			gfx.setColor(Color.red);
-			gfx.drawString("Spelet över!", 350, 250);
+			gfx.drawString("Spelet över! Tryck på R för att spela igen.", 250, 250);
+		}
+		else if(b1.getX() < -10 || b1.getX() > 710) {
+			gameOver = true;
 		}
 		else {
-		p1.draw(gfx);
-		b1.draw(gfx);
-		p2.draw(gfx);
+			p1.draw(gfx);
+			b1.draw(gfx);
+			p2.draw(gfx);
 		}
 		
-		if(!gameStarted) {
+		if(!gameStarted && !gameOver) {
 			gfx.setColor(Color.white);
 			gfx.drawString("Tennis", 340, 100);
 			gfx.drawString("Tryck på ENTER för att starta...", 310, 130);
@@ -52,7 +56,7 @@ public class Tennis extends Applet implements Runnable, KeyListener{
 	}
 	
 	public void update(Graphics g) {
-		 paint(g);
+		paint(g);
 	}
 
 	public void run() {
@@ -69,13 +73,10 @@ public class Tennis extends Applet implements Runnable, KeyListener{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
 		}
-		
 	}
 
 	public void keyTyped(KeyEvent e) {
-
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -84,21 +85,25 @@ public class Tennis extends Applet implements Runnable, KeyListener{
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 			p1.setDownAccel(true);
-		} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		} 
+		else if (e.getKeyCode() == KeyEvent.VK_ENTER && !gameStarted) {
 			gameStarted = true;
+		} 
+		else if (e.getKeyCode() == KeyEvent.VK_R && gameOver) {
+			gameOver = false;
+			gameStarted = false;
+			p1 = new HumanPaddle(1);
+			b1 = new Ball();
+			p2 = new AIPaddle(2, b1);
 		}
 	}
 
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_UP) {
 			p1.setUpAccel(false);
-
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 			p1.setDownAccel(false);
-
 		}
-		
 	}
-
 }
